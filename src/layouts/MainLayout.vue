@@ -52,7 +52,7 @@
 <script setup>
 import { defineComponent, ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
-import { logout } from "../firebase/firebase-auth";
+import { logout } from "../firebase/auth";
 
 const linksList = [
   {

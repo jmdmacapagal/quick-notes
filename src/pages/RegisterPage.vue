@@ -54,7 +54,7 @@
 
 <script setup>
 import { ref, reactive } from "vue";
-import { register } from "../firebase/firebase-auth";
+import { register } from "../firebase/auth";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
