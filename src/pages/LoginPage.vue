@@ -54,6 +54,10 @@
 
 <script setup>
 import { ref, reactive } from "vue";
+import { login } from "../firebase/firebase-auth";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const user = reactive({
   email: null,
@@ -64,6 +68,10 @@ const form = ref(null);
 
 const submit = async () => {
   if (form.value.validate()) {
+    const response = await login(user);
+    if (response.user) {
+      router.push("/dashboard");
+    }
   }
 };
 </script>

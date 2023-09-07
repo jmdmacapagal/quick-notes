@@ -54,7 +54,7 @@
 
 <script setup>
 import { ref, reactive } from "vue";
-import { register } from "../firebase/firebase-register";
+import { register } from "../firebase/firebase-auth";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -68,7 +68,7 @@ const form = ref(null);
 
 const submit = async () => {
   if (form.value.validate()) {
-    const response = await register(user.email, user.password);
+    const response = await register(user);
 
     if (response.user) {
       setTimeout(() => {

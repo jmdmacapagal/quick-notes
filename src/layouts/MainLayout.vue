@@ -1,24 +1,28 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <!-- <q-header elevated>
+    <q-header elevated>
       <q-toolbar>
-        <q-btn
+        <!-- <q-btn
           flat
           dense
           round
           icon="menu"
           aria-label="Menu"
           @click="toggleLeftDrawer"
+        /> -->
+
+        <q-toolbar-title> Quick Notes </q-toolbar-title>
+
+        <q-btn
+          push
+          style="background: red; color: white; max-width: 240px"
+          label="Sign Out"
+          @click="logout"
+          class="q-px-xl q-py-xs col-4"
         />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
-
+    <!--
     <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
@@ -45,9 +49,10 @@
   </q-layout>
 </template>
 
-<script>
+<script setup>
 import { defineComponent, ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
+import { logout } from "../firebase/firebase-auth";
 
 const linksList = [
   {
@@ -93,24 +98,4 @@ const linksList = [
     link: "https://awesome.quasar.dev",
   },
 ];
-
-export default defineComponent({
-  name: "MainLayout",
-
-  // components: {
-  //   EssentialLink,
-  // },
-
-  // setup() {
-  //   const leftDrawerOpen = ref(false);
-
-  //   return {
-  //     essentialLinks: linksList,
-  //     leftDrawerOpen,
-  //     toggleLeftDrawer() {
-  //       leftDrawerOpen.value = !leftDrawerOpen.value;
-  //     },
-  //   };
-  // },
-});
 </script>
