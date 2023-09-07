@@ -21,13 +21,13 @@
           push
           color="primary"
           label="Add"
-          @click="addTodo"
+          @click="add"
           class="q-px-xl q-py-xs col-4"
-          :disable="!todoDetails || !todoTitle"
+          :disable="!todoContent || !todoTitle"
         />
       </div>
       <q-input
-        v-model="todoDetails"
+        v-model="todoContent"
         type="textarea"
         label="Details about your new todo"
       />
@@ -37,21 +37,33 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { addTodo, getTodos } from "../firebase/firestore";
+import { LocalStorage } from "quasar";
 
 const todos = ref([]);
 const todoTitle = ref("");
-const todoDetails = ref("");
+const todoContent = ref("");
 
-const addTodo = () => {
-  if (todoTitle.value && todoDetails.value) {
-    todos.value.push({
-      id: todos.value.length + 1,
-      title: todoTitle.value,
-      details: todoDetails.value,
+const user = LocalStorage.getItem("user");
+
+onMounted(() => {
+  getTodos(user.uid).then((res) => {
+    console.log(res);
+  });
+});
+
+const add = () => {
+  if (todoTitle.value && todoContent.value) {
+    addTodo({
+      userId: user.uid,
+      todo: {
+        title: todoTitle.value,
+        content: todoContent.value,
+      },
     });
 
     todoTitle.value = "";
-    todoDetails.value = "";
+    todoContent.value = "";
   }
 };
 </script>

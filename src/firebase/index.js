@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { LocalStorage } from "quasar";
 
 const firebaseConfig = {
@@ -11,9 +12,9 @@ const firebaseConfig = {
   appId: "1:670436742519:web:6f7ed19488de632d8a7d72",
 };
 
-// Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore(app);
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
