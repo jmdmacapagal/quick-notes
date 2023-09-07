@@ -5,6 +5,8 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  orderBy,
+  query,
 } from "firebase/firestore";
 import { db } from "./index.js";
 import { Loading, Notify } from "quasar";
@@ -12,7 +14,7 @@ import { Loading, Notify } from "quasar";
 export const addTodo = async ({ todo, userId }) => {
   Loading.show();
   try {
-    await addDoc(collection(db, userId), todo);
+    await addDoc(collection(db, userId), { ...todo, created_at: Date.now() });
 
     Notify.create({
       type: "positive",
@@ -29,14 +31,16 @@ export const addTodo = async ({ todo, userId }) => {
 };
 
 export const getTodos = async (userId) => {
-  const querySnapshot = await getDocs(collection(db, userId));
+  const querySnapshot = await getDocs(
+    query(collection(db, userId), orderBy("created_at", "desc"))
+  );
   return querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 };
 
 export const updateTodo = async ({ todo, userId }) => {
   try {
     const itemRef = doc(db, userId, todo.id);
-    await updateDoc(itemRef, todo);
+    await updateDoc(itemRef, { ...todo, updated_at: Date.now() });
 
     Notify.create({
       type: "positive",
