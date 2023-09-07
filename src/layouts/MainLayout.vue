@@ -15,10 +15,10 @@
 
         <q-btn
           push
-          style="background: red; color: white; max-width: 240px"
+          style="background: red; color: white; max-width: 200px"
           label="Sign Out"
           @click="logout"
-          class="q-px-xl q-py-xs col-4"
+          class="q-px-md q-py-xs col-4"
         />
       </q-toolbar>
     </q-header>

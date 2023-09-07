@@ -1,80 +1,98 @@
 <template>
-  <div class="row main-container">
-    <div class="todo-list-container col-5 q-px-sm q-py-sm">
-      <div v-if="todos.length" class="">
-        <span
-          v-for="{ title, id, details } in todos"
-          :key="id"
-          class="block q-py-xs q-px-sm q-mb-sm bg-white"
-        >
-          {{ title }} -- {{ details.substring(0, 50) }} ...</span
-        >
-      </div>
-      <div v-else class="text-center">
-        <h6>You don't have anything on your list yet.</h6>
-      </div>
-    </div>
-    <form class="col-7 q-px-sm q-pt-sm">
-      <div class="row">
-        <q-input v-model="todoTitle" label="New Todo" class="input col-8" />
-        <q-btn
-          push
-          color="primary"
-          label="Add"
-          @click="add"
-          class="q-px-xl q-py-xs col-4"
-          :disable="!todoContent || !todoTitle"
-        />
-      </div>
-      <q-input
-        v-model="todoContent"
-        type="textarea"
-        label="Details about your new todo"
-      />
-    </form>
+  <div>
+    <todos-container :todos="todos" :openTodo="openTodo" />
+
+    <q-page-sticky
+      position="top-right"
+      :offset="[40, 18]"
+      @click="toggleAddTodo = !toggleAddTodo"
+    >
+      <q-btn fab icon="add" color="green" />
+    </q-page-sticky>
+
+    <todo-form
+      :addTodo="addItem"
+      v-if="toggleAddTodo"
+      :closeModal="closeModal"
+      :todo="todoForUpdate"
+      :isEdit="isEdit"
+      :updateTodo="updateItem"
+      :deleteTodo="deleteItem"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { addTodo, getTodos } from "../firebase/firestore";
+import {
+  addTodo,
+  getTodos,
+  updateTodo,
+  deleteTodo,
+} from "../firebase/firestore";
 import { LocalStorage } from "quasar";
+import TodosContainer from "../components/TodosContainer.vue";
+import TodoForm from "../components/TodoForm.vue";
 
 const todos = ref([]);
-const todoTitle = ref("");
-const todoContent = ref("");
+const toggleAddTodo = ref(false);
+const isEdit = ref(false);
 
 const user = LocalStorage.getItem("user");
 
+const todoForUpdate = ref({});
+
 onMounted(() => {
-  getTodos(user.uid).then((res) => {
-    console.log(res);
-  });
+  getTodosFromDB();
 });
 
-const add = () => {
-  if (todoTitle.value && todoContent.value) {
-    addTodo({
-      userId: user.uid,
-      todo: {
-        title: todoTitle.value,
-        content: todoContent.value,
-      },
-    });
+const addItem = (todo) => {
+  addTodo({
+    userId: user.uid,
+    todo: {
+      title: todo.title,
+      content: todo.content,
+    },
+  });
+  reset();
+};
 
-    todoTitle.value = "";
-    todoContent.value = "";
-  }
+const updateItem = (todo) => {
+  updateTodo({
+    userId: user.uid,
+    todo,
+  });
+  reset();
+};
+
+const deleteItem = (todo) => {
+  deleteTodo({
+    userId: user.uid,
+    todo,
+  });
+  reset();
+};
+
+const getTodosFromDB = async () => {
+  todos.value = await getTodos(user.uid).then((todos) => todos);
+};
+
+const closeModal = () => {
+  toggleAddTodo.value = false;
+  todoForUpdate.value = {};
+  isEdit.value = false;
+};
+
+const openTodo = (todo) => {
+  isEdit.value = true;
+  todoForUpdate.value = todo;
+  toggleAddTodo.value = true;
+};
+
+const reset = () => {
+  getTodosFromDB();
+  closeModal();
 };
 </script>
 
-<style lang="scss" scoped>
-.main-container {
-  max-width: 60%;
-  margin: 100px auto 0;
-}
-
-.todo-list-container {
-  background: #ececec;
-}
-</style>
+<style lang="scss" scoped></style>
